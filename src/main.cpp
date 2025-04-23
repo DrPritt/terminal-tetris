@@ -30,53 +30,120 @@ int main(int argc, char *argv[]) {
     WINDOW *whole_screen = newwin(terminal_height, terminal_width, box_y, box_x);
 
     WINDOW *game_board;
+
     WINDOW *score_board;
     WINDOW *first_preview;
     WINDOW *second_preview;
     WINDOW *third_preview;
 
+    WINDOW *change_box;
+
+
+    // Defiing window default sizes
     int does_size_matter{};
 
-    int game_board_height;
-    int game_board_width;
+    int game_board_height{20};
+    int game_board_width{10 * 2}; // Times two because one block consists of two spaces - Original Tetris grid is 10 x 20
 
-    int score_board_height;
-    int score_board_width;
+    int score_board_height{3};
+    int score_board_width{10};
 
-    int first_preview_height;
-    int first_preview_width;
+    int preview_board_height{4};
+    int preview_board_width{10};
 
-    if (terminal_height < 21) {
+
+
+    if (terminal_height < 23 or terminal_width < 48) {
         mvwprintw(whole_screen, terminal_height / 2, terminal_width / 2 - 33 / 2, "Too small, make terminal bigger!" );
         does_size_matter = 1;
 
-    } else if (terminal_height < 42) {
-        game_board_height = 22;
-        game_board_width = 22;
+    } else if (terminal_height > 43) {
+        // Makes every window 2 times larger
+        game_board_height *= 2;
+        game_board_width *= 2;
 
-        score_board_height = 5;
-        score_board_width = 10;
+        score_board_height += 2;
+        score_board_width *= 2;
 
-    } else {
-        game_board_height = 42;
-        game_board_width = 44;
-
-        score_board_height = 10;
-        score_board_width = 10;
+        preview_board_height *= 2;
+        preview_board_width *= 2;
     }
     
     nodelay(whole_screen, TRUE);
     
-    box(whole_screen, 0, 0);
+    // box(whole_screen, 0, 0);
+
+    
     if (!does_size_matter) {
-        game_board  = newwin(game_board_height, game_board_width, 0, terminal_width / 2 - game_board_width / 2);
-        score_board = newwin(score_board_height, score_board_width, 0, )
+
+        game_board_height += 2;
+        game_board_width += 2;
+
+        score_board_height += 2;
+        score_board_width += 2;
+
+        preview_board_height += 2;
+        preview_board_width += 2;
+
+
+        game_board  = newwin(
+            game_board_height, 
+            game_board_width, 
+            terminal_height / 2 - game_board_height / 2, 
+            terminal_width / 2 - game_board_width / 2);
+
         box(game_board,0 ,0);
+
+        score_board = newwin(
+            score_board_height, 
+            score_board_width,
+            terminal_height / 2 - game_board_height / 2,
+            terminal_width / 2 + game_board_width / 2);
+
+        box(score_board,0 ,0);
+
+        first_preview = newwin(
+            preview_board_height, 
+            preview_board_width, 
+            terminal_height / 2 - game_board_height / 2 + score_board_height,
+            terminal_width / 2 + game_board_width / 2);
+
+        box(first_preview, 0, 0);
+
+        second_preview = newwin(
+            preview_board_height, 
+            preview_board_width, 
+            terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height,
+            terminal_width / 2 + game_board_width / 2);
+
+        box(second_preview, 0, 0);
+
+        third_preview = newwin(
+            preview_board_height, 
+            preview_board_width, 
+            terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height * 2,
+            terminal_width / 2 + game_board_width / 2);
+
+        box(third_preview, 0, 0);
+
+        change_box = newwin(
+            preview_board_height, 
+            preview_board_width, 
+            terminal_height / 2 - game_board_height / 2,
+            terminal_width / 2 - game_board_width / 2 - preview_board_width);
+
+        box(change_box, 0, 0);
+
     }
 
     wrefresh(whole_screen);
     if (!does_size_matter) {
         wrefresh(game_board);
+        wrefresh(score_board);
+        wrefresh(first_preview);
+        wrefresh(second_preview);
+        wrefresh(third_preview);
+        wrefresh(change_box);
     }
 
     int character;
