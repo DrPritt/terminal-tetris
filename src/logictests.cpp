@@ -2,6 +2,10 @@
 #include "../inc/blocks.h"
 #include <iostream>
 #include <cstring>
+#include <chrono>  // For std::chrono::milliseconds
+#include <thread>  // For std::this_thread::sleep_for
+#include <cstdlib> // For system() call
+
 
 void fallFurtherTest() {
   std::cout << "~~~~~~~FALL FURTHER TEST~~~~~~~" << std::endl
@@ -117,6 +121,111 @@ void moveBlockLeftTest(){
   }
 }
 
+void clearScreen() {
+    // Clear screen command for most terminals
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+void testComplexScenarioWithAnimation() {
+    std::cout << "~~~~~~~~~~~COMPLEX SCENARIO TEST~~~~~~~~~~~\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Initial delay
+    
+    // Create data stream
+    dataStream ds;
+    
+    // Step 1: Summon TSquare
+    clearScreen();
+    std::cout << "Adding TSquare block...\n";
+    addFallingBlock(ds, TSquare);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    // Step 2: Rotate it twice
+    clearScreen();
+    std::cout << "Rotating TSquare right once...\n";
+    rotateBlockRight(ds);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    clearScreen();
+    std::cout << "Rotating TSquare right again...\n";
+    rotateBlockRight(ds);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    // Step 3: Let it fall to the bottom
+    std::cout << "\nLetting TSquare fall to the bottom...\n";
+    while(!hasHitRockBottom(ds)) {
+        clearScreen();
+        std::cout << "Falling TSquare...\n";
+        fallFurtherDown(ds);
+        printAllOfGame(ds);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Fall speed
+    }
+    
+    // Step 4: Lock it in
+    clearScreen();
+    std::cout << "Locking TSquare in place...\n";
+    lockFallingBlock(ds);
+    clearFallingBlock(ds);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    
+    // Step 5: Summon I block
+    clearScreen();
+    std::cout << "Adding Line (I) block...\n";
+    addFallingBlock(ds, Line);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    // Step 6: Rotate it
+    clearScreen();
+    std::cout << "Rotating Line block right...\n";
+    rotateBlockRight(ds);
+    printAllOfGame(ds);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    // Step 7: Move it right while letting it fall
+    std::cout << "\nMoving Line block right while falling...\n";
+    while(true) {
+        // Try to move right if possible
+        bool canMoveRight = true;
+        for(int i{0}; i < ROWS; i++) { 
+            if(ds.fallingFrame[i][COLUMNS-1]) { 
+                canMoveRight = false;
+                break;
+            }
+        }
+        if(canMoveRight) {
+            moveBlockRight(ds);
+        }
+        
+        // Let it fall
+        if(hasHitRockBottom(ds)) {
+            break;
+        }
+        fallFurtherDown(ds);
+        
+        // Display
+        clearScreen();
+        std::cout << "Moving I block right and falling...\n";
+        printAllOfGame(ds);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Movement speed
+    }
+    
+    // Final state
+    clearScreen();
+    std::cout << "Final state:\n";
+    printAllOfGame(ds);
+    
+    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+}
+
+
 int main(int argv, char *argc[]) {
   for(int i{0}; i < argv; i++){
     if(!strcmp(argc[i], "rockbottom")){
@@ -135,7 +244,8 @@ int main(int argv, char *argc[]) {
       moveBlockRightTest();
     }else if(!strcmp(argc[i], "moveblockL")){
       moveBlockLeftTest();
+    }else if(!strcmp(argc[i], "complex")) {
+      testComplexScenarioWithAnimation();
     }
   }
-
 }

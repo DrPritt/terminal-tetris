@@ -72,7 +72,9 @@ void moveBlockRight(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][COLUMNS-1]){ return; } // CHECKS IF OOB
   }
-  frameData.blockNullPoint.x++;
+  if(frameData.blockNullPoint.x != COLUMNS - 1 - frameData.blockType.dimension){
+    frameData.blockNullPoint.x++;
+  }
   for(int i{0}; i < ROWS; i++){
     std::memmove(&frameData.fallingFrame[i][1], &frameData.fallingFrame[i][0], sizeof(int) * (COLUMNS-1));
     frameData.fallingFrame[i][0] = 0;
@@ -83,7 +85,9 @@ void moveBlockLeft(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][0]){ return; } // CHECKS IF OOB
   }
-  frameData.blockNullPoint.x--;
+  if(frameData.blockNullPoint.x != 0){
+    frameData.blockNullPoint.x--;
+  }
   for(int i{0}; i < ROWS; i++){
     std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
     frameData.fallingFrame[i][COLUMNS-1] = 0;
@@ -123,6 +127,20 @@ void printMatrix(int matrix[ROWS][COLUMNS]){
   for(int i{0}; i < ROWS; i++){
     for(int j{0}; j < COLUMNS; j++){
       std::cout << matrix[i][j] << ' ';
+    }
+    std::cout << '\n';
+  }
+  std::cout << '\n';
+}
+
+void printAllOfGame(const dataStream& ds){
+  for(int i{0}; i < ROWS; i++){
+    for(int j{0}; j < COLUMNS; j++){
+      if(ds.fallingFrame[i][j] || ds.gameFrame[i][j]){
+        std::cout << '1' << ' ';
+      }else{
+        std::cout << '0' << ' ';
+      }
     }
     std::cout << '\n';
   }

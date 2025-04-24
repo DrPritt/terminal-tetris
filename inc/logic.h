@@ -43,3 +43,5 @@ void rotateBlockLeft(dataStream& frameData);
 void moveBlockRight(dataStream& frameData);
 
 void moveBlockLeft(dataStream& frameData);
+
+void printAllOfGame(const dataStream& ds);
