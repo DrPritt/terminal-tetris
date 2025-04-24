@@ -19,12 +19,103 @@ int fallFurtherDown(dataStream& frameData){
   // moves the falling block one row further down
   if(hasHitRockBottom(frameData)){ return 1; } // DO NOT LET A STOPPED BLOCK FALL ANY FURTHER
 
+  frameData.blockNullPoint.y++;
   std::memmove(frameData.fallingFrame[1], frameData.fallingFrame[0], (ROWS - 1) * sizeof(frameData.fallingFrame[0]));
   // moves everything one row further down (no data loss since wouldn't happen if anything on the last row)
   for(int i{0}; i < COLUMNS; i++){ // sets first row to 0
     frameData.fallingFrame[0][i] = 0;
   }
   return 0;
+}
+
+void rotateBlockRight(dataStream& frameData){
+  // ROTATES THE FALLING BLOCK RIGHT BY 90 DEGREES
+  // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
+  clearFallingBlock(frameData);
+  frameData.blockOrientation++;
+  for(int i{0}; i < frameData.blockType.dimension; i++){
+    for(int j{0}; j < frameData.blockType.dimension; j++){
+      if(frameData.blockOrientation%4 == 0){
+      frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.flat[i][j];
+      }else if(frameData.blockOrientation%4 == 1){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.ninety[i][j];
+      }else if(frameData.blockOrientation%4 == 2){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.inverted[i][j];
+      }else if(frameData.blockOrientation%4 == 3){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.twoseventy[i][j];
+      }
+    }
+  }
+}
+
+void rotateBlockLeft(dataStream& frameData){
+  // ROTATES THE FALLING BLOCK LEFT BY 90 DEGREES
+  // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
+  clearFallingBlock(frameData);
+  frameData.blockOrientation--;
+  for(int i{0}; i < frameData.blockType.dimension; i++){
+    for(int j{0}; j < frameData.blockType.dimension; j++){
+      if(frameData.blockOrientation%4 == 0){
+      frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.flat[i][j];
+      }else if(frameData.blockOrientation%4 == 1){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.ninety[i][j];
+      }else if(frameData.blockOrientation%4 == 2){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.inverted[i][j];
+      }else if(frameData.blockOrientation%4 == 3){
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.twoseventy[i][j];
+      }
+    }
+  }
+}
+
+void moveBlockRight(dataStream& frameData){
+  for(int i{0}; i < ROWS; i++){ 
+    if(frameData.fallingFrame[i][COLUMNS-1]){ return; } // CHECKS IF OOB
+  }
+  frameData.blockNullPoint.x++;
+  for(int i{0}; i < ROWS; i++){
+    std::memmove(&frameData.fallingFrame[i][1], &frameData.fallingFrame[i][0], sizeof(int) * (COLUMNS-1));
+    frameData.fallingFrame[i][0] = 0;
+  }
+}
+
+void moveBlockLeft(dataStream& frameData){
+  for(int i{0}; i < ROWS; i++){ 
+    if(frameData.fallingFrame[i][0]){ return; } // CHECKS IF OOB
+  }
+  frameData.blockNullPoint.x--;
+  for(int i{0}; i < ROWS; i++){
+    std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
+    frameData.fallingFrame[i][COLUMNS-1] = 0;
+  }
+}
+
+void addFallingBlock(dataStream& frameData, block block){
+  // adds a falling block to the top of the game
+  for(int i{0}; i < block.dimension; i++){
+    for(int j{0}; j < block.dimension; j++){
+      frameData.fallingFrame[i][j] = block.flat[i][j];
+    }
+  }
+  frameData.blockNullPoint.x = 0;
+  frameData.blockNullPoint.y = 0;
+  frameData.blockType = block;
+}
+
+void clearFallingBlock(dataStream& frameData){
+  // clears falling block matrix
+  memset(frameData.fallingFrame, 0, sizeof(frameData.fallingFrame));
+}
+
+void lockFallingBlock(dataStream& frameData){
+  // adds the falling block into locked frames
+  for(int i{0}; i < ROWS; i++){
+    for(int j{0}; j < COLUMNS; j++){
+      if(frameData.fallingFrame[i][j]){
+        frameData.gameFrame[i][j] = 1;
+      }
+    }
+  }
 }
 
 void printMatrix(int matrix[ROWS][COLUMNS]){
@@ -38,46 +129,3 @@ void printMatrix(int matrix[ROWS][COLUMNS]){
   std::cout << '\n';
 }
 
-#ifdef FALLFURTHERTEST
-int main(){
-  std::cout << "~~~~~~~FALL FURTHER TEST~~~~~~~" << std::endl << std::endl;
-  dataStream ds;
-  ds.fallingFrame[0][1] = 1;
-  while(true){
-    printMatrix(ds.fallingFrame);
-    if(fallFurtherDown(ds)){ break; }
-  }
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-  return 0;
-}
-#endif
-
-#ifdef ROCKBOTTOMTEST
-int main(){
-  std::cout << "~~~~~~~ROCK BOTTOM TEST~~~~~~~" << std::endl;
-
-  // TEST 2
-  // adds blocks to the bottom game frame and one above it for the falling block frame, then tests if they touch. return true
-  dataStream ds;
-  for(int i{0}; i < COLUMNS; i++){
-    ds.gameFrame[ROWS-1][i] = 1;
-    ds.fallingFrame[ROWS-2][i] = 1;
-  }
-  std::cout << "test 1: SHOULD RETURN true: " << std::boolalpha << hasHitRockBottom(ds) << std::endl;
-
-  // TEST 2
-  // removes the blocks from bottom game frame. Falling block can fall further without touching. return false!
-  for(int i{0}; i < COLUMNS; i++){ 
-    ds.gameFrame[ROWS-1][i] = 0;
-  }
-  std::cout << "test 2: SHOULD RETURN false: " << std::boolalpha << hasHitRockBottom(ds) << std::endl;
-
-  // TEST 3
-  // generates a single falling block on the bottom row. should not be able to fall any further. return true!
-  dataStream ds2;
-  ds2.fallingFrame[ROWS-1][1] = 1; 
-  std::cout << "test 3: SHOULD RETURN true: " << std::boolalpha << hasHitRockBottom(ds2) << std::endl;
-
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-}
-#endif
