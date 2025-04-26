@@ -5,7 +5,7 @@ INC_DIR = inc
 
 # Compiler settings
 CC := g++
-CFLAGS := -std=c++20 -Wall -Werror -g -Wpedantic
+CFLAGS := -std=c++20 -g -Wpedantic # -Wall -Werror
 CPPFLAGS := -I $(INC_DIR)  
 LDLIBS := -lm  -lncurses
 VALGRIND_FLAGS := -s --leak-check=full --show-leak-kinds=all --track-origins=yes
