@@ -24,6 +24,10 @@ struct dataStream{
   point blockNullPoint; // x, y coordinates of the top left corner of the block definition
   unsigned int blockOrientation; // counter for keeping count of the orientation. ++ when rotating right, -- when rotating left. (thats why unsigned)
   block blockType; // blocktype again just the number in blocks.h.
+  block nextBlock;
+  block nextNextBlock;
+  block holdingBlock;
+  unsigned long score{0};
 };
 
 bool hasHitRockBottom(dataStream frameData); // returns true if the currently falling block has hit something
@@ -42,8 +46,8 @@ void rotateBlockRight(dataStream& frameData); // rotates block clockwise 90 degr
 
 void rotateBlockLeft(dataStream& frameData); // rotates block anticlockwise 90 degrees. Doesn't check for collisions yet.
 
-void moveBlockRight(dataStream& frameData); // moves block to the right. Checks for collisions.
+void moveBlockRight(dataStream& frameData); // moves block to the right. Checks for OOB
 
-void moveBlockLeft(dataStream& frameData); // moves block to the left. Checks for collisions.
+void moveBlockLeft(dataStream& frameData); // moves block to the left. Checks for OOB
 
 void printAllOfGame(const dataStream& ds); // prints the game matrix, complete with the falling block and static blocks.
