@@ -2,8 +2,16 @@
 
 #include <curses.h>
 #include <iostream>
+#include <vector>
 
 #include <unistd.h>
 
 void print_help(void);
 void print_version(void);
+
+void refresh_all(std::vector<WINDOW*>);
+void borders_all(std::vector<WINDOW *>, WINDOW * = nullptr); 
+
+void draw_dots(WINDOW *, int, int, int);
+
+void draw_board(WINDOW *, int);
