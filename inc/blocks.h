@@ -1,3 +1,11 @@
+// DEFINE ALL BLOCKS HERE!
+// !!!!!INCLUDE THIS FILE ONLY ONCE!!!!!!!!
+// BLOCK DEFINITIONS ARE CLOCKWISE
+// increase blocktype by 1 (one) each new block
+// dimension is just max width/height of the block
+// add header protection for each new definition
+// good luck have fun C:
+
 #pragma once
 #include "logic.h"
 
