@@ -137,7 +137,7 @@ void printAllOfGame(const dataStream& ds){
   for(int i{0}; i < ROWS; i++){
     for(int j{0}; j < COLUMNS; j++){
       if(ds.fallingFrame[i][j] || ds.gameFrame[i][j]){
-        std::cout << '1' << ' ';
+        std::cout << ds.fallingFrame[i][j] << ' ';
       }else{
         std::cout << '0' << ' ';
       }
