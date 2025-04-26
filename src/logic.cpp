@@ -116,7 +116,7 @@ void lockFallingBlock(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){
     for(int j{0}; j < COLUMNS; j++){
       if(frameData.fallingFrame[i][j]){
-        frameData.gameFrame[i][j] = 1;
+        frameData.gameFrame[i][j] = frameData.fallingFrame[i][j];
       }
     }
   }
@@ -133,17 +133,30 @@ void printMatrix(int matrix[ROWS][COLUMNS]){
   std::cout << '\n';
 }
 
-void printAllOfGame(const dataStream& ds){
-  for(int i{0}; i < ROWS; i++){
-    for(int j{0}; j < COLUMNS; j++){
-      if(ds.fallingFrame[i][j] || ds.gameFrame[i][j]){
-        std::cout << ds.fallingFrame[i][j] << ' ';
-      }else{
-        std::cout << '0' << ' ';
-      }
-    }
-    std::cout << '\n';
-  }
-  std::cout << '\n';
+void printAllOfGame(dataStream& ds){
+  // for(int i{0}; i < ROWS; i++){
+  //   for(int j{0}; j < COLUMNS; j++){
+  //     if(ds.fallingFrame[i][j]){
+  //       std::cout << ds.fallingFrame[i][j] << ' ';
+  //     }else{
+  //       std::cout << ds.gameFrame[i][j] << ' ';
+  //     }
+  //   }
+  //   std::cout << '\n';
+  // }
+  // std::cout << '\n';
+  combineFrames(ds);
+  printMatrix(ds.entireGame);
 }
 
+void combineFrames(dataStream& ds){
+  for(int i{0}; i < ROWS; i++){
+    for(int j{0}; j < COLUMNS; j++){
+      if(ds.fallingFrame[i][j]){
+        ds.entireGame[i][j] = ds.fallingFrame[i][j];
+      }else{
+        ds.entireGame[i][j] = ds.gameFrame[i][j];
+      }
+    }
+  }
+}

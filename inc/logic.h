@@ -21,6 +21,7 @@ struct block{
 struct dataStream{
   int gameFrame[ROWS][COLUMNS]{0}; // ALREADY STATIC BLOCKS AKA HAVE HIT SOMETHING
   int fallingFrame[ROWS][COLUMNS]{0}; // CURRENTLY FALLING FRAME
+  int entireGame[ROWS][COLUMNS]{0}; // Both static and moving blocks combined
   point blockNullPoint; // x, y coordinates of the top left corner of the block definition
   unsigned int blockOrientation; // counter for keeping count of the orientation. ++ when rotating right, -- when rotating left. (thats why unsigned)
   block blockType; // blocktype again just the number in blocks.h.
@@ -50,4 +51,6 @@ void moveBlockRight(dataStream& frameData); // moves block to the right. Checks 
 
 void moveBlockLeft(dataStream& frameData); // moves block to the left. Checks for OOB
 
-void printAllOfGame(const dataStream& ds); // prints the game matrix, complete with the falling block and static blocks.
+void printAllOfGame(dataStream& ds); // prints the game matrix, complete with the falling block and static blocks.
+
+void combineFrames(dataStream& ds);
