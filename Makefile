@@ -17,7 +17,7 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp
 all: $(TARGET)
 	@ echo "Compiling complete!"
 	@ echo
-	@ ./$(TARGET)
+	@ # @ ./$(TARGET)
 
 valrun:
 	@ echo "Running program with valgrind!"
