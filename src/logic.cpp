@@ -95,7 +95,7 @@ void moveBlockRight(dataStream& frameData){
     if(frameData.fallingFrame[i][COLUMNS-1]){ return; } // CHECKS IF OOB
   }
   if(willCollideHorizontal(frameData, 1)){ return; }
-  if(frameData.blockNullPoint.x != COLUMNS - 1 - frameData.blockType.dimension){
+  if(frameData.blockNullPoint.x != COLUMNS - frameData.blockType.dimension){
     frameData.blockNullPoint.x++;
   }
   for(int i{0}; i < ROWS; i++){
