@@ -32,18 +32,18 @@ void rotateBlockRight(dataStream& frameData){
   // ROTATES THE FALLING BLOCK RIGHT BY 90 DEGREES
   // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
   // worst code ever....
-  if(frameData.blockOrientation%4 == 0 && willCollide(frameData, frameData.blockType.flat)){
+  if(frameData.blockOrientation%4 == 0 && willCollide(frameData, frameData.blockType.ninety)){
     return;
-  }else if(frameData.blockOrientation%4 == 1 && willCollide(frameData, frameData.blockType.ninety)){
+  }else if(frameData.blockOrientation%4 == 1 && willCollide(frameData, frameData.blockType.inverted)){
     return;
-  }else if(frameData.blockOrientation%4 == 2 && willCollide(frameData, frameData.blockType.inverted)){
+  }else if(frameData.blockOrientation%4 == 2 && willCollide(frameData, frameData.blockType.twoseventy)){
     return;
-  }else if(frameData.blockOrientation%4 == 3 && willCollide(frameData, frameData.blockType.twoseventy)){
+  }else if(frameData.blockOrientation%4 == 3 && willCollide(frameData, frameData.blockType.flat)){
     return;
   }else{ 
     clearFallingBlock(frameData);
     frameData.blockOrientation++;
-   }
+  }
 
   for(int i{0}; i < frameData.blockType.dimension; i++){
     for(int j{0}; j < frameData.blockType.dimension; j++){
@@ -61,9 +61,9 @@ void rotateBlockRight(dataStream& frameData){
 }
 
 bool willCollide(const dataStream& frameData, const int matrix[5][5]){
-  for(int i{frameData.blockNullPoint.y}; i < frameData.blockType.dimension + frameData.blockNullPoint.y; i++){
-    for(int j{frameData.blockNullPoint.x}; j < frameData.blockType.dimension + frameData.blockNullPoint.x; j++){
-      if(matrix[i][j] && frameData.gameFrame[i][j]){ return true; }
+  for(int i{0}; i < frameData.blockType.dimension; i++){
+    for(int j{0}; j < frameData.blockType.dimension; j++){
+      if(matrix[i][j] && frameData.gameFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x]){ return true; }
     }
   }
   return false;
