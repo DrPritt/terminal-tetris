@@ -27,9 +27,10 @@ mkdir obj
 make all
 ```
 
-You should see a "main" file in the /terminal-tetris directory!
+You should see a "main" file in the project root.
 
 3. After compiling all the files you can run the executable by doing:
+
 NB! It is highly recommended to run this in a regular terminal (not in some text editor for example VS Code)!
 
 ```bash

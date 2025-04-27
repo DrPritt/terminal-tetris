@@ -177,19 +177,14 @@ int main(int argc, char *argv[]) {
     
     addFallingBlock(ds, TSquare);
     
-    int character;
     
     using clock = std::chrono::steady_clock;
     auto last_drop = clock::now();
     const int drop_interval_ms = 500;
+    
+    int character;
 
-
-    // auto get_interval = [&](int level){
-    //     int iv = base_interval_ms - level * level_speed_decrement;
-    //     return std::max(50, iv);                  // never faster than 50ms
-    // };
-
-    // int i{};
+    int show_controls{1};
 
     while ((character = wgetch(whole_screen))) {
         switch (character) {
@@ -209,6 +204,9 @@ int main(int argc, char *argv[]) {
             // delwin(whole_screen);??????????
             endwin();
             return 0;
+            case 'p':
+            show_controls++;
+            break;
         }
         
         // mvwprintw(game_board, 0, 0, "%d", i++);
@@ -244,6 +242,10 @@ int main(int argc, char *argv[]) {
         draw_dots(game_board, game_board_height, game_board_width, double_size);
         draw_board(game_board, double_size, ds);
         wrefresh(game_board);
+
+        // if (show_controls / 2 == 0) {
+        //     draw_controls(whole_screen, double_size);
+        // }
         
         
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
