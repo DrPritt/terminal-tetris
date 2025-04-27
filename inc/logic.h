@@ -55,4 +55,6 @@ void printAllOfGame(dataStream& ds); // prints the game matrix, complete with th
 
 void combineFrames(dataStream& ds); // combines falling and game frame
 
-bool willCollide(const dataStream& frameData, const int matrix[5][5]); // checks if given frame will collide with the game frame
+bool willCollide(const dataStream& frameData, const int matrix[5][5]); // checks if rotation will collide with the game frame
+
+bool willCollideHorizontal(dataStream frameData, int way); // checks if moving horizontally will collide with the game frame

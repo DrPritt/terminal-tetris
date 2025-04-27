@@ -69,6 +69,7 @@ bool willCollide(const dataStream& frameData, const int matrix[5][5]){
   return false;
 }
 
+
 void rotateBlockLeft(dataStream& frameData){
   // ROTATES THE FALLING BLOCK LEFT BY 90 DEGREES
   // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
@@ -93,6 +94,7 @@ void moveBlockRight(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][COLUMNS-1]){ return; } // CHECKS IF OOB
   }
+  if(willCollideHorizontal(frameData, 1)){ return; }
   if(frameData.blockNullPoint.x != COLUMNS - 1 - frameData.blockType.dimension){
     frameData.blockNullPoint.x++;
   }
@@ -106,6 +108,7 @@ void moveBlockLeft(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][0]){ return; } // CHECKS IF OOB
   }
+  if(willCollideHorizontal(frameData, -1)){ return; }
   if(frameData.blockNullPoint.x != 0){
     frameData.blockNullPoint.x--;
   }
@@ -113,6 +116,30 @@ void moveBlockLeft(dataStream& frameData){
     std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
     frameData.fallingFrame[i][COLUMNS-1] = 0;
   }
+}
+
+bool willCollideHorizontal(dataStream frameData, int way){
+  frameData.blockNullPoint.x += way;
+  if(way < 0){
+    for(int i{0}; i < ROWS; i++){
+      std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
+      frameData.fallingFrame[i][COLUMNS-1] = 0;
+    }
+  }else if(way > 0){
+    for(int i{0}; i < ROWS; i++){
+      std::memmove(&frameData.fallingFrame[i][1], &frameData.fallingFrame[i][0], sizeof(int) * (COLUMNS-1));
+      frameData.fallingFrame[i][0] = 0;
+    }
+  }
+
+  for(int i{0}; i < ROWS; i++){
+    for(int j{0}; j < COLUMNS; j++){
+      if(frameData.fallingFrame[i][j] && frameData.gameFrame[i][j]){
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void addFallingBlock(dataStream& frameData, block block){
