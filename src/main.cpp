@@ -179,43 +179,74 @@ int main(int argc, char *argv[]) {
     
     int character;
     
-    int i{};
+    using clock = std::chrono::steady_clock;
+    auto last_drop = clock::now();
+    const int drop_interval_ms = 500;
+
+
+    // auto get_interval = [&](int level){
+    //     int iv = base_interval_ms - level * level_speed_decrement;
+    //     return std::max(50, iv);                  // never faster than 50ms
+    // };
+
+    // int i{};
 
     while ((character = wgetch(whole_screen))) {
         switch (character) {
-            case '\t':
+            case 'a':
+            moveBlockLeft(ds);
             break;
-            case 'l':
+            case 'd':
+            moveBlockRight(ds);
             break;
-          case 'k':
+            case ' ':
+            rotateBlockRight(ds);
             break;
-          case '\n':
+            case '\n':
+            lockFallingBlock(ds);
             break;
-          case 'q':
+            case 'q':
             // delwin(whole_screen);??????????
             endwin();
             return 0;
         }
         
-        mvwprintw(game_board, 0, 0, "%d", i++);
+        // mvwprintw(game_board, 0, 0, "%d", i++);
+        
+        
+        
+        
+        
+        // while (!hasHitRockBottom(ds)) {
+        //     fallFurtherDown(ds);
+        // }
+        
+        // lockFallingBlock(ds);
+        // clearFallingBlock(ds);
+        // addFallingBlock(ds, Line);
+        
+        auto now = clock::now();
+        // int interval = get_interval(ds.level);
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_drop).count();
 
+        if (elapsed >= drop_interval_ms) {
+
+            if (fallFurtherDown(ds)) {
+                lockFallingBlock(ds);
+                clearFallingBlock(ds);
+                addFallingBlock(ds, Line);
+            }
+            last_drop = now;
+        }
+        
+        
         combineFrames(ds);
-
         draw_dots(game_board, game_board_height, game_board_width, double_size);
         draw_board(game_board, double_size, ds);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-        // fallFurtherDown(ds);
-
-        if (fallFurtherDown(ds)) {
-            mvwprintw(whole_screen, 0, 0, "down!");
-            lockFallingBlock(ds);
-            clearFallingBlock(ds);
-            addFallingBlock(ds, Line);
-        }
-
         wrefresh(game_board);
+        
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     return 0;
 }
@@ -243,8 +274,10 @@ void borders_all(std::vector<WINDOW *> windows, WINDOW * ignore) {
         if (window == ignore) {
             continue;
         }
-
+        
+        wattron(window, A_BOLD);
         box(window, 0, 0);
+        wattroff(window, A_BOLD);
     }
 }
 
