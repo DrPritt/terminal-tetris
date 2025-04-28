@@ -155,10 +155,8 @@ int main(int argc, char *argv[]) {
 
     refresh_all(windows);
     
-    
-    
 
-
+    
     start_color();
     // use_default_colors();
 
