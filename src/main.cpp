@@ -178,13 +178,14 @@ int main(int argc, char *argv[]) {
     
     using clock = std::chrono::steady_clock;
     auto last_drop = clock::now();
-    const int drop_interval_ms = 500;
+    int drop_interval_ms = 500;
     
     int character;
 
     int show_controls{1};
 
     while ((character = wgetch(whole_screen))) {
+        drop_interval_ms = 500;
         switch (character) {
             case 'a':
             moveBlockLeft(ds);
@@ -192,7 +193,7 @@ int main(int argc, char *argv[]) {
             case 'd':
             moveBlockRight(ds);
             break;
-            case ' ':
+            case 'w':
             rotateBlockRight(ds);
             break;
             case '\n':
@@ -205,6 +206,13 @@ int main(int argc, char *argv[]) {
             case 'p':
             show_controls++;
             break;
+            case ' ':
+            while(!fallFurtherDown(ds));
+            break;
+            case 's':
+            drop_interval_ms = 50;
+            break;
+
         }
         
         // mvwprintw(game_board, 0, 0, "%d", i++);
@@ -225,8 +233,8 @@ int main(int argc, char *argv[]) {
         // int interval = get_interval(ds.level);
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_drop).count();
 
+        checkAndClearLine(ds);
         if (elapsed >= drop_interval_ms) {
-
             if (fallFurtherDown(ds)) {
                 lockFallingBlock(ds);
                 clearFallingBlock(ds);

@@ -31,12 +31,24 @@ int fallFurtherDown(dataStream& frameData){
 void rotateBlockRight(dataStream& frameData){
   // ROTATES THE FALLING BLOCK RIGHT BY 90 DEGREES
   // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
-  clearFallingBlock(frameData);
-  frameData.blockOrientation++;
+  // worst code ever....
+  if(frameData.blockOrientation%4 == 0 && willCollide(frameData, frameData.blockType.ninety)){
+    return;
+  }else if(frameData.blockOrientation%4 == 1 && willCollide(frameData, frameData.blockType.inverted)){
+    return;
+  }else if(frameData.blockOrientation%4 == 2 && willCollide(frameData, frameData.blockType.twoseventy)){
+    return;
+  }else if(frameData.blockOrientation%4 == 3 && willCollide(frameData, frameData.blockType.flat)){
+    return;
+  }else{ 
+    clearFallingBlock(frameData);
+    frameData.blockOrientation++;
+  }
+
   for(int i{0}; i < frameData.blockType.dimension; i++){
     for(int j{0}; j < frameData.blockType.dimension; j++){
       if(frameData.blockOrientation%4 == 0){
-      frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.flat[i][j];
+        frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.flat[i][j];
       }else if(frameData.blockOrientation%4 == 1){
         frameData.fallingFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x] = frameData.blockType.ninety[i][j];
       }else if(frameData.blockOrientation%4 == 2){
@@ -47,6 +59,16 @@ void rotateBlockRight(dataStream& frameData){
     }
   }
 }
+
+bool willCollide(const dataStream& frameData, const int matrix[5][5]){
+  for(int i{0}; i < frameData.blockType.dimension; i++){
+    for(int j{0}; j < frameData.blockType.dimension; j++){
+      if(matrix[i][j] && frameData.gameFrame[i + frameData.blockNullPoint.y][j + frameData.blockNullPoint.x]){ return true; }
+    }
+  }
+  return false;
+}
+
 
 void rotateBlockLeft(dataStream& frameData){
   // ROTATES THE FALLING BLOCK LEFT BY 90 DEGREES
@@ -72,7 +94,8 @@ void moveBlockRight(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][COLUMNS-1]){ return; } // CHECKS IF OOB
   }
-  if(frameData.blockNullPoint.x != COLUMNS - 1 - frameData.blockType.dimension){
+  if(willCollideHorizontal(frameData, 1)){ return; }
+  if(frameData.blockNullPoint.x != COLUMNS - frameData.blockType.dimension){
     frameData.blockNullPoint.x++;
   }
   for(int i{0}; i < ROWS; i++){
@@ -85,6 +108,7 @@ void moveBlockLeft(dataStream& frameData){
   for(int i{0}; i < ROWS; i++){ 
     if(frameData.fallingFrame[i][0]){ return; } // CHECKS IF OOB
   }
+  if(willCollideHorizontal(frameData, -1)){ return; }
   if(frameData.blockNullPoint.x != 0){
     frameData.blockNullPoint.x--;
   }
@@ -92,6 +116,30 @@ void moveBlockLeft(dataStream& frameData){
     std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
     frameData.fallingFrame[i][COLUMNS-1] = 0;
   }
+}
+
+bool willCollideHorizontal(dataStream frameData, int way){
+  frameData.blockNullPoint.x += way;
+  if(way < 0){
+    for(int i{0}; i < ROWS; i++){
+      std::memmove(&frameData.fallingFrame[i][0], &frameData.fallingFrame[i][1], sizeof(int) * (COLUMNS-1));
+      frameData.fallingFrame[i][COLUMNS-1] = 0;
+    }
+  }else if(way > 0){
+    for(int i{0}; i < ROWS; i++){
+      std::memmove(&frameData.fallingFrame[i][1], &frameData.fallingFrame[i][0], sizeof(int) * (COLUMNS-1));
+      frameData.fallingFrame[i][0] = 0;
+    }
+  }
+
+  for(int i{0}; i < ROWS; i++){
+    for(int j{0}; j < COLUMNS; j++){
+      if(frameData.fallingFrame[i][j] && frameData.gameFrame[i][j]){
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void addFallingBlock(dataStream& frameData, block block){
@@ -159,4 +207,23 @@ void combineFrames(dataStream& ds){
       }
     }
   }
+}
+
+void checkAndClearLine(dataStream& frameData){
+  for(int i{0}; i < ROWS; i++){
+    bool lineFull = true;
+    for(int j{0}; j < COLUMNS; j++){
+      if(frameData.gameFrame[i][j] == 0){
+        lineFull = false;
+      }
+    }
+    if(lineFull){
+      frameData.score += COLUMNS;
+      std::memmove(frameData.gameFrame[1], frameData.gameFrame[0], (i) * sizeof(frameData.gameFrame[i]));
+      for(int x{0}; x < COLUMNS; x++){
+        frameData.gameFrame[0][x] = 0;
+      }
+    }
+  }
+
 }
