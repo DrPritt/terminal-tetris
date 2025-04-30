@@ -235,7 +235,6 @@ int main(int argc, char *argv[]) {
             last_drop = now;
         }
         
-        
         combineFrames(ds);
         draw_dots(game_board, game_board_height, game_board_width, double_size);
         draw_board(game_board, double_size, ds);
