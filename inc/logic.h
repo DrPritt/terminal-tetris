@@ -58,3 +58,5 @@ void combineFrames(dataStream& ds); // combines falling and game frame
 bool willCollide(const dataStream& frameData, const int matrix[5][5]); // checks if rotation will collide with the game frame
 
 bool willCollideHorizontal(dataStream frameData, int way); // checks if moving horizontally will collide with the game frame
+
+void checkAndClearLine(dataStream& frameData); // checks for any full lines and removes them. adds score!

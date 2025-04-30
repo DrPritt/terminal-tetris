@@ -208,3 +208,22 @@ void combineFrames(dataStream& ds){
     }
   }
 }
+
+void checkAndClearLine(dataStream& frameData){
+  for(int i{0}; i < ROWS; i++){
+    bool lineFull = true;
+    for(int j{0}; j < COLUMNS; j++){
+      if(frameData.gameFrame[i][j] == 0){
+        lineFull = false;
+      }
+    }
+    if(lineFull){
+      frameData.score += COLUMNS;
+      std::memmove(frameData.gameFrame[1], frameData.gameFrame[0], (i) * sizeof(frameData.gameFrame[i]));
+      for(int x{0}; x < COLUMNS; x++){
+        frameData.gameFrame[0][x] = 0;
+      }
+    }
+  }
+
+}
