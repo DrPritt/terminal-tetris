@@ -1,6 +1,8 @@
 #include "../inc/logic.h"
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
+#include <ctime>
 
 bool hasHitRockBottom(const dataStream frameData){ // i have hit rock bottom
   // checks whether the falling frame has hit anything and should be stopped from moving any further down
@@ -30,7 +32,6 @@ int fallFurtherDown(dataStream& frameData){
 
 void rotateBlockRight(dataStream& frameData){
   // ROTATES THE FALLING BLOCK RIGHT BY 90 DEGREES
-  // DOES NOT CHECK FOR COLLISIONS!!!!!!!!!!!!!
   // worst code ever....
   if(frameData.blockOrientation%4 == 0 && willCollide(frameData, frameData.blockType.ninety)){
     return;
@@ -152,6 +153,7 @@ void addFallingBlock(dataStream& frameData, block block){
   frameData.blockNullPoint.x = 0;
   frameData.blockNullPoint.y = 0;
   frameData.blockType = block;
+  frameData.blockOrientation = 0;
 }
 
 void clearFallingBlock(dataStream& frameData){
@@ -225,5 +227,18 @@ void checkAndClearLine(dataStream& frameData){
       }
     }
   }
+}
 
+void setUpGame(dataStream& frameData, block blockList[], int totalBlocks){
+  std::srand(std::time(0));
+  frameData.nextBlock = blockList[std::rand() % totalBlocks];
+  frameData.nextNextBlock = blockList[std::rand() % totalBlocks];
+}
+
+block getNext(dataStream& frameData, block blockList[], int totalBlocks){
+  std::srand(std::time(0));
+  block retBlock = frameData.nextBlock;
+  frameData.nextBlock = frameData.nextNextBlock;
+  frameData.nextNextBlock = blockList[std::rand() % totalBlocks];
+  return retBlock;
 }

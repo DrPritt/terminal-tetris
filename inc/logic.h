@@ -60,3 +60,7 @@ bool willCollide(const dataStream& frameData, const int matrix[5][5]); // checks
 bool willCollideHorizontal(dataStream frameData, int way); // checks if moving horizontally will collide with the game frame
 
 void checkAndClearLine(dataStream& frameData); // checks for any full lines and removes them. adds score!
+
+void setUpGame(dataStream& frameData, block blockList[], int totalBlocks); // generates 3 random blocks
+
+block getNext(dataStream& frameData, block blockList[], int totalBlocks); // returns the next block and generates a new one

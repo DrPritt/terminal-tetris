@@ -173,7 +173,8 @@ int main(int argc, char *argv[]) {
     
     dataStream ds;
     
-    addFallingBlock(ds, TSquare);
+    setUpGame(ds, blockList, TOTALBLOCKS);
+    addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
     
     
     using clock = std::chrono::steady_clock;
@@ -238,7 +239,7 @@ int main(int argc, char *argv[]) {
             if (fallFurtherDown(ds)) {
                 lockFallingBlock(ds);
                 clearFallingBlock(ds);
-                addFallingBlock(ds, Line);
+                addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
             }
             last_drop = now;
         }
