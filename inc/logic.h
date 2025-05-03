@@ -64,3 +64,5 @@ void checkAndClearLine(dataStream& frameData); // checks for any full lines and 
 void setUpGame(dataStream& frameData, block blockList[], int totalBlocks); // generates 3 random blocks
 
 block getNext(dataStream& frameData, block blockList[], int totalBlocks); // returns the next block and generates a new one
+
+bool isGameJoever(dataStream& frameData);
