@@ -27,6 +27,7 @@ struct dataStream{
   block blockType; // blocktype again just the number in blocks.h.
   block nextBlock;
   block nextNextBlock;
+  bool holdsBlock{false};
   block holdingBlock;
   unsigned long score{0};
 };
@@ -65,4 +66,6 @@ void setUpGame(dataStream& frameData, block blockList[], int totalBlocks); // ge
 
 block getNext(dataStream& frameData, block blockList[], int totalBlocks); // returns the next block and generates a new one
 
-bool isGameJoever(dataStream& frameData);
+bool isGameJoever(dataStream& frameData); // Returns whether game lost or not
+
+void changeHold(dataStream& frameData, block blockList[], int maxBlocks); // changes the holding block with the currently falling block
