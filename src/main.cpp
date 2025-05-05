@@ -15,6 +15,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
+
     initscr();
     noecho();
     curs_set(0);
@@ -36,6 +38,8 @@ int main(int argc, char *argv[]) {
     if (!has_colors() or !can_change_color()) {
         std::printf("Can't change color!");
         return 0;
+    } else {
+        start_color();
     }
     
     WINDOW *game_board;
@@ -98,13 +102,13 @@ int main(int argc, char *argv[]) {
         terminal_height / 2 - game_board_height / 2,
         terminal_width / 2 + game_board_width / 2);
         
-        first_preview = newwin(
+    first_preview = newwin(
             preview_board_height, 
         preview_board_width, 
         terminal_height / 2 - game_board_height / 2 + score_board_height,
         terminal_width / 2 + game_board_width / 2);
         
-        second_preview = newwin(
+    second_preview = newwin(
             preview_board_height, 
             preview_board_width, 
             terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height,
@@ -116,24 +120,26 @@ int main(int argc, char *argv[]) {
         terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height * 2,
         terminal_width / 2 + game_board_width / 2);
         
-        change_box = newwin(
+    change_box = newwin(
             preview_board_height, 
             preview_board_width, 
             terminal_height / 2 - game_board_height / 2,
             terminal_width / 2 - game_board_width / 2 - preview_board_width);
             
-            std::vector<WINDOW *> windows = {
-                whole_screen,
-                game_board,
-                score_board,
+    std::vector<WINDOW *> windows = {
+        whole_screen,
+        game_board,
+        score_board,
         first_preview,
         second_preview,
         third_preview,
         change_box
     };
     
-    borders_all(windows, whole_screen);
-    
+    // borders_all(windows, whole_screen);
+    wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
+        ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
+
     mvwprintw(score_board, double_size ? 2 : 1, 1, double_size ? "Current:" : "C:");
     mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
     
@@ -155,9 +161,6 @@ int main(int argc, char *argv[]) {
 
     refresh_all(windows);
     
-
-    
-    start_color();
     // use_default_colors();
 
     short r, g, b;
@@ -215,26 +218,17 @@ int main(int argc, char *argv[]) {
             break;
 
         }
-        
-        // mvwprintw(game_board, 0, 0, "%d", i++);
-        
-        
-        
-        
-        
-        // while (!hasHitRockBottom(ds)) {
-        //     fallFurtherDown(ds);
-        // }
-        
-        // lockFallingBlock(ds);
-        // clearFallingBlock(ds);
-        // addFallingBlock(ds, Line);
+
+        // ---------------------------- CLOCK -------------------------------------
         
         auto now = clock::now();
         // int interval = get_interval(ds.level);
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_drop).count();
 
         checkAndClearLine(ds);
+
+        // ---------------------------- MOVES THE BLOCK DOWN -------------------------------------
+
         if (elapsed >= drop_interval_ms) {
             if (fallFurtherDown(ds)) {
                 lockFallingBlock(ds);
@@ -243,21 +237,26 @@ int main(int argc, char *argv[]) {
             }
             last_drop = now;
         }
-        
+
+        // ---------------------------------------------------------------------------------------
+
         combineFrames(ds);
+
+        // ---------------------------- UPDATES EVERYTHING ---------------------------------------
+
         draw_dots(game_board, game_board_height, game_board_width, double_size);
         draw_board(game_board, double_size, ds);
-        wrefresh(game_board);
+        draw_score(score_board, score_board_height, score_board_width, double_size, ds.score);
+        // draw_block(first_preview, ds.nextBlock.blockType, )
 
-        // if (show_controls / 2 == 0) {
-        //     draw_controls(whole_screen, double_size);
-        // }
-        
+        wrefresh(game_board);
         
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     return 0;
 }
+
+// -------------------------------------------------------------------------------------------------
 
 void print_help(void) {
     std::cout 
@@ -303,7 +302,6 @@ void draw_board(WINDOW * w, int d, dataStream ds) {
         for (int column{}; column < COLUMNS; column++) {
             int num = ds.entireGame[row][column];
             if (num) {
-                // mvwprintw(w, 0, 10, "Going to!");
                 draw_block(w, num, row, column);
             }
         }
@@ -322,4 +320,11 @@ void draw_block(WINDOW* w, int n, int row, int column) {
         break;
     }
     mvwprintw(w, row + 1, column * 2 + 1, ". ");
+}
+
+void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
+    
+    wattroff(w, A_STANDOUT);
+    mvwprintw(w, d ? 2 : 1, d ? 11 : 5, "%lu", score);
+    wrefresh(w);
 }

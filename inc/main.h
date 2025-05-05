@@ -2,6 +2,8 @@
 
 #include <curses.h>
 #include <unistd.h>
+#include <locale.h>
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -24,3 +26,4 @@ void draw_block(WINDOW *, int, int, int);
 
 void moving_down(dataStream &);
 
+void draw_score(WINDOW*, int, int, int, unsigned long);
