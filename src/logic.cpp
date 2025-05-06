@@ -242,3 +242,26 @@ block getNext(dataStream& frameData, block blockList[], int totalBlocks){
   frameData.nextNextBlock = blockList[std::rand() % totalBlocks];
   return retBlock;
 }
+
+bool isGameJoever(dataStream& frameData){
+  for(int i{0}; i < COLUMNS; i++){
+    if(frameData.gameFrame[0][i]){
+      return true;
+    }
+  }
+  return false;
+}
+
+void changeHold(dataStream& frameData, block blockList[], int maxBlocks){
+  if(frameData.holdsBlock){
+    block tempBlock = frameData.holdingBlock;
+    frameData.holdingBlock = frameData.blockType;
+    clearFallingBlock(frameData);
+    addFallingBlock(frameData, tempBlock);
+  }else{
+    frameData.holdingBlock = frameData.blockType;
+    clearFallingBlock(frameData);
+    addFallingBlock(frameData, getNext(frameData, blockList, maxBlocks));
+    frameData.holdsBlock = true;
+  }
+}
