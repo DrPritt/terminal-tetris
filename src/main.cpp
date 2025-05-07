@@ -212,10 +212,15 @@ int main(int argc, char *argv[]) {
             break;
             case ' ':
             while(!fallFurtherDown(ds));
+            lockFallingBlock(ds);
+            clearFallingBlock(ds);
+            addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
             break;
             case 's':
             drop_interval_ms = 50;
             break;
+            case 'e':
+            changeHold(ds, blockList, TOTALBLOCKS);
 
         }
 
@@ -224,11 +229,8 @@ int main(int argc, char *argv[]) {
         auto now = clock::now();
         // int interval = get_interval(ds.level);
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_drop).count();
-
         checkAndClearLine(ds);
-
-        // ---------------------------- MOVES THE BLOCK DOWN -------------------------------------
-
+        if(isGameJoever(ds)){ endwin(); return 0; }
         if (elapsed >= drop_interval_ms) {
             if (fallFurtherDown(ds)) {
                 lockFallingBlock(ds);
