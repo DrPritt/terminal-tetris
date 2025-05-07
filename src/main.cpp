@@ -209,6 +209,9 @@ int main(int argc, char *argv[]) {
             break;
             case ' ':
             while(!fallFurtherDown(ds));
+            lockFallingBlock(ds);
+            clearFallingBlock(ds);
+            addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
             break;
             case 's':
             drop_interval_ms = 50;
