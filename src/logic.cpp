@@ -236,7 +236,6 @@ void setUpGame(dataStream& frameData, block blockList[], int totalBlocks){
 }
 
 block getNext(dataStream& frameData, block blockList[], int totalBlocks){
-  std::srand(std::time(0));
   block retBlock = frameData.nextBlock;
   frameData.nextBlock = frameData.nextNextBlock;
   frameData.nextNextBlock = blockList[std::rand() % totalBlocks];
