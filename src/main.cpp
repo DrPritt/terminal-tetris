@@ -136,9 +136,9 @@ int main(int argc, char *argv[]) {
         change_box
     };
     
-    // borders_all(windows, whole_screen);
-    wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
-        ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
+    borders_all(windows, whole_screen);
+    //wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
+    //    ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
     mvwprintw(score_board, double_size ? 2 : 1, 1, double_size ? "Current:" : "C:");
     mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
