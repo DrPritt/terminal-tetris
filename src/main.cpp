@@ -132,8 +132,8 @@ int main(int argc, char *argv[]) {
     //wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
     //    ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
-    mvwprintw(score_board, double_size ? 2 : 1, 1, double_size ? "Current:" : "C:");
-    mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
+    mvwprintw(score_board, double_size ? 3 : 2, 1, double_size ? "Current:" : "C:");
+    // mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
     
     
     wattron(score_board, A_STANDOUT);
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     mvwprintw(second_preview, 0, 1, double_size ? " II PREVIEW " : " II ");
     
     wattron(change_box, A_STANDOUT);
-    mvwprintw(change_box, 0, 1, double_size ? " NEXT PIECE " : " NEXT ");
+    mvwprintw(change_box, 0, 1, double_size ? " HOLD PIECE " : " HOLD ");
 
     refresh_all(windows);
     
@@ -236,9 +236,7 @@ int main(int argc, char *argv[]) {
         draw_board(game_board, double_size, ds);
         draw_score(score_board, score_board_height, score_board_width, double_size, ds.score);
         
-        draw_previews(first_preview, second_preview, preview_board_height, preview_board_width, double_size, ds);
-
-
+        draw_side_boxes(first_preview, second_preview, change_box, preview_board_height, preview_board_width, double_size, ds);
 
         refresh_all(windows);
         
@@ -316,12 +314,14 @@ void draw_block(WINDOW* w, int n, int row, int column) {
 void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
     
     wattroff(w, A_STANDOUT);
-    mvwprintw(w, d ? 2 : 1, d ? 11 : 5, "%lu", score);
+    mvwprintw(w, d ? 3 : 2, d ? 11 : 5, "%lu", score);
 }
 
 
-void draw_previews(WINDOW *first, WINDOW *second, int height, int width, int d, dataStream ds) {
+void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, int width, int d, dataStream ds) {
     
+
+    // ----------------------------------------- FIRST PREVIEW -------------------------------------------
     draw_dots(first, height, width, d);
 
     for (int row{}; row < height; row++) {
@@ -333,6 +333,7 @@ void draw_previews(WINDOW *first, WINDOW *second, int height, int width, int d, 
         }
     }
 
+    // ----------------------------------------- SECOND PREVIEW -------------------------------------------
     draw_dots(second, height, width, d);
 
     for (int row{}; row < height; row++) {
@@ -343,4 +344,20 @@ void draw_previews(WINDOW *first, WINDOW *second, int height, int width, int d, 
             }
         }
     }
+
+    // ----------------------------------------- HOLD BOX -------------------------------------------
+    draw_dots(hold, height, width, d);
+    
+    if (ds.holdsBlock) {
+
+        for (int row{}; row < height; row++) {
+            for (int column{}; column < width; column++) {
+                int num = ds.holdingBlock.flat[row][column];
+                if (num) {
+                    draw_block(hold, num, ds.holdingBlock.blockType == 2 ? row : row+1, column+1);
+                }
+            }
+        }
+    }
+    
 }
