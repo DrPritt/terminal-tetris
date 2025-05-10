@@ -47,7 +47,6 @@ int main(int argc, char *argv[]) {
     WINDOW *score_board;
     WINDOW *first_preview;
     WINDOW *second_preview;
-    WINDOW *third_preview;
     
     WINDOW *change_box;
     
@@ -113,12 +112,6 @@ int main(int argc, char *argv[]) {
             preview_board_width, 
             terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height,
             terminal_width / 2 + game_board_width / 2);
-            
-    third_preview = newwin(
-        preview_board_height, 
-        preview_board_width, 
-        terminal_height / 2 - game_board_height / 2 + score_board_height + preview_board_height * 2,
-        terminal_width / 2 + game_board_width / 2);
         
     change_box = newwin(
             preview_board_height, 
@@ -132,7 +125,6 @@ int main(int argc, char *argv[]) {
         score_board,
         first_preview,
         second_preview,
-        third_preview,
         change_box
     };
     
@@ -152,9 +144,6 @@ int main(int argc, char *argv[]) {
 
     wattron(second_preview, A_STANDOUT);
     mvwprintw(second_preview, 0, 1, double_size ? " II PREVIEW " : " II ");
-    
-    wattron(third_preview, A_STANDOUT);
-    mvwprintw(third_preview, 0, 1, double_size ? " III PREVIEW " : " III ");
     
     wattron(change_box, A_STANDOUT);
     mvwprintw(change_box, 0, 1, double_size ? " NEXT PIECE " : " NEXT ");
@@ -199,9 +188,6 @@ int main(int argc, char *argv[]) {
             break;
             case 'w':
             rotateBlockRight(ds);
-            break;
-            case '\n':
-            lockFallingBlock(ds);
             break;
             case 'q':
             // delwin(whole_screen);??????????
@@ -249,9 +235,12 @@ int main(int argc, char *argv[]) {
         draw_dots(game_board, game_board_height, game_board_width, double_size);
         draw_board(game_board, double_size, ds);
         draw_score(score_board, score_board_height, score_board_width, double_size, ds.score);
-        // draw_block(first_preview, ds.nextBlock.blockType, )
+        
+        draw_previews(first_preview, second_preview, preview_board_height, preview_board_width, double_size, ds);
 
-        wrefresh(game_board);
+
+
+        refresh_all(windows);
         
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -328,5 +317,30 @@ void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
     
     wattroff(w, A_STANDOUT);
     mvwprintw(w, d ? 2 : 1, d ? 11 : 5, "%lu", score);
-    wrefresh(w);
+}
+
+
+void draw_previews(WINDOW *first, WINDOW *second, int height, int width, int d, dataStream ds) {
+    
+    draw_dots(first, height, width, d);
+
+    for (int row{}; row < height; row++) {
+        for (int column{}; column < width; column++) {
+            int num = ds.nextBlock.flat[row][column];
+            if (num) {
+                draw_block(first, num, ds.nextBlock.blockType == 2 ? row : row+1, column+1);
+            }
+        }
+    }
+
+    draw_dots(second, height, width, d);
+
+    for (int row{}; row < height; row++) {
+        for (int column{}; column < width; column++) {
+            int num = ds.nextNextBlock.flat[row][column];
+            if (num) {
+                draw_block(second, num, ds.nextNextBlock.blockType == 2 ? row : row+1, column+1);
+            }
+        }
+    }
 }

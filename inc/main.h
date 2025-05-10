@@ -27,3 +27,6 @@ void draw_block(WINDOW *, int, int, int);
 void moving_down(dataStream &);
 
 void draw_score(WINDOW*, int, int, int, unsigned long);
+
+
+void draw_previews(WINDOW *, WINDOW *, int, int, int, dataStream);
