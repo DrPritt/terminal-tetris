@@ -22,7 +22,7 @@ void draw_dots(WINDOW *, int, int, int);
 
 void draw_board(WINDOW *, int, dataStream);
 
-void draw_block(WINDOW *, int, int, int);
+void draw_block(WINDOW *, int, int, int, int);
 
 void moving_down(dataStream &);
 

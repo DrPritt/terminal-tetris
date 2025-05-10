@@ -281,7 +281,12 @@ void draw_dots(WINDOW * w, int height, int width, int d) {
     wattroff(w, A_STANDOUT);
     for (int i{}; i < (d ? (height-2) / 2 : height-2); i++) {
         for (int j{}; j < (d ? (width-2) / 4 : (width-2) / 2); j++) {
-            mvwprintw(w, d ? i * 2 + 2: i +1, d ? j * 4 + 1: j * 2 + 1, ". ");
+            if (d) {
+                mvwprintw(w, i * 2 + 1, j * 4 + 1, "    ");
+                mvwprintw(w, i * 2 + 2, j * 4 + 1, ".   ");
+            } else {
+                mvwprintw(w, i +1, j * 2 + 1, ". ");
+            }
         }   
     }
 }
@@ -291,13 +296,13 @@ void draw_board(WINDOW * w, int d, dataStream ds) {
         for (int column{}; column < COLUMNS; column++) {
             int num = ds.entireGame[row][column];
             if (num) {
-                draw_block(w, num, row, column);
+                draw_block(w, num, row, column, d);
             }
         }
     }
 }
 
-void draw_block(WINDOW* w, int n, int row, int column) {
+void draw_block(WINDOW* w, int n, int row, int column, int size) {
     wattron(w, A_STANDOUT);
     switch (n) {
         
@@ -308,7 +313,12 @@ void draw_block(WINDOW* w, int n, int row, int column) {
         default:
         break;
     }
-    mvwprintw(w, row + 1, column * 2 + 1, ". ");
+    if (size) {
+        mvwprintw(w, row * 2 + 1, column * 4 + 1, "    ");
+        mvwprintw(w, row * 2 + 2, column * 4 + 1, ".   ");
+    } else {
+        mvwprintw(w, row +1, column * 2 + 1, ". ");
+    }
 }
 
 void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
@@ -319,7 +329,6 @@ void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
 
 
 void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, int width, int d, dataStream ds) {
-    
 
     // ----------------------------------------- FIRST PREVIEW -------------------------------------------
     draw_dots(first, height, width, d);
@@ -328,7 +337,7 @@ void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, in
         for (int column{}; column < width; column++) {
             int num = ds.nextBlock.flat[row][column];
             if (num) {
-                draw_block(first, num, ds.nextBlock.blockType == 2 ? row : row+1, column+1);
+                draw_block(first, num, ds.nextBlock.blockType == 2 ? row : row+1, column+1, d);
             }
         }
     }
@@ -340,7 +349,7 @@ void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, in
         for (int column{}; column < width; column++) {
             int num = ds.nextNextBlock.flat[row][column];
             if (num) {
-                draw_block(second, num, ds.nextNextBlock.blockType == 2 ? row : row+1, column+1);
+                draw_block(second, num, ds.nextNextBlock.blockType == 2 ? row : row+1, column+1, d);
             }
         }
     }
@@ -354,7 +363,7 @@ void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, in
             for (int column{}; column < width; column++) {
                 int num = ds.holdingBlock.flat[row][column];
                 if (num) {
-                    draw_block(hold, num, ds.holdingBlock.blockType == 2 ? row : row+1, column+1);
+                    draw_block(hold, num, ds.holdingBlock.blockType == 2 ? row : row+1, column+1, d);
                 }
             }
         }
