@@ -35,12 +35,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    if (!has_colors() or !can_change_color()) {
-        std::printf("Can't change color!");
-        return 0;
-    } else {
+    if (has_colors()) {
         start_color();
+        if (can_change_color()) {
+            use_default_colors();
+            enable_soft_tetris_palette();  // Custom function you'll define
+            set_background(whole_screen, terminal_height, terminal_width);
+        } else {
+            enable_basic_palette();        // Fallback to 8 standard colors
+        }
     }
+
     
     WINDOW *game_board;
     
@@ -128,46 +133,33 @@ int main(int argc, char *argv[]) {
         change_box
     };
     
+    set_background(score_board, score_board_height, score_board_width);
+    
     borders_all(windows, whole_screen);
     //wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
     //    ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
-
+    
     mvwprintw(score_board, double_size ? 3 : 2, 1, double_size ? "Current:" : "C:");
     // mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
-    
     
     wattron(score_board, A_STANDOUT);
     mvwprintw(score_board, 0, 1, " SCORE ");
     
     wattron(first_preview, A_STANDOUT);
-    mvwprintw(first_preview, 0, 1, double_size ? " I PREVIEW " : " I ");
+    mvwprintw(first_preview, 0, 1, " I ");
 
     wattron(second_preview, A_STANDOUT);
-    mvwprintw(second_preview, 0, 1, double_size ? " II PREVIEW " : " II ");
+    mvwprintw(second_preview, 0, 1, " II ");
     
     wattron(change_box, A_STANDOUT);
-    mvwprintw(change_box, 0, 1, double_size ? " HOLD PIECE " : " HOLD ");
+    mvwprintw(change_box, 0, 1, " HOLD ");
 
     refresh_all(windows);
-    
-    // use_default_colors();
-
-    short r, g, b;
-    color_content(COLOR_RED, &r, &g, &b);  
-
-    r = std::clamp(r + 200, 0, 1000);
-    g = std::clamp(g + 200, 0, 1000);
-    b = std::clamp(b + 200, 0, 1000);
-
-    init_color(COLOR_RED, r, g, b);
-
-    init_pair(1, COLOR_RED, -1);
     
     dataStream ds;
     
     setUpGame(ds, blockList, TOTALBLOCKS);
     addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
-    
     
     using clock = std::chrono::steady_clock;
     auto last_drop = clock::now();
@@ -191,6 +183,7 @@ int main(int argc, char *argv[]) {
             break;
             case 'q':
             // delwin(whole_screen);??????????
+            // printf("\033]111;\007");
             endwin();
             return 0;
             case 'p':
@@ -271,16 +264,25 @@ void borders_all(std::vector<WINDOW *> windows, WINDOW * ignore) {
             continue;
         }
         
+
         wattron(window, A_BOLD);
+        wattron(window, COLOR_PAIR(8));
+
+        wattron(window, A_STANDOUT);
         box(window, 0, 0);
         wattroff(window, A_BOLD);
+        // wattroff(window, COLOR_PAIR(9));
     }
 }
 
 void draw_dots(WINDOW * w, int height, int width, int d) {
-    wattroff(w, A_STANDOUT);
+    
+    wattron(w, COLOR_PAIR(8));
+    wattron(w, A_STANDOUT);
+
     for (int i{}; i < (d ? (height-2) / 2 : height-2); i++) {
         for (int j{}; j < (d ? (width-2) / 4 : (width-2) / 2); j++) {
+
             if (d) {
                 mvwprintw(w, i * 2 + 1, j * 4 + 1, "    ");
                 mvwprintw(w, i * 2 + 2, j * 4 + 1, ".   ");
@@ -304,26 +306,27 @@ void draw_board(WINDOW * w, int d, dataStream ds) {
 
 void draw_block(WINDOW* w, int n, int row, int column, int size) {
     wattron(w, A_STANDOUT);
-    switch (n) {
+    // switch (n) {
         
-    case 1:
-        // mvwprintw(w, 1, 10, "%d", n);
-        break;
+    // case 1:
+    //     wattron(w, COLOR_PAIR(n));
+    //     break;
         
-        default:
-        break;
-    }
+    //     default:
+    //     break;
+    // }
+    wattron(w, COLOR_PAIR(n));
     if (size) {
         mvwprintw(w, row * 2 + 1, column * 4 + 1, "    ");
         mvwprintw(w, row * 2 + 2, column * 4 + 1, ".   ");
     } else {
         mvwprintw(w, row +1, column * 2 + 1, ". ");
     }
+    wattroff(w, COLOR_PAIR(n));
 }
 
 void draw_score(WINDOW* w, int height, int width, int d, unsigned long score) {
-    
-    wattroff(w, A_STANDOUT);
+    // wattroff(w, A_STANDOUT);
     mvwprintw(w, d ? 3 : 2, d ? 11 : 5, "%lu", score);
 }
 
@@ -369,4 +372,56 @@ void draw_side_boxes(WINDOW *first, WINDOW *second, WINDOW *hold, int height, in
         }
     }
     
+}
+
+void enable_soft_tetris_palette() {
+
+    init_color(12, 0xf5 * 4, 0x7d * 4, 0x26 * 4); 
+    init_color(13, 0xf8 * 4, 0x55 * 4, 0x52 * 4); 
+    init_color(14, 0xdf * 4, 0xa0 * 4, 0x00 * 4); 
+    init_color(15, 0x8d * 4, 0xa1 * 4, 0x01 * 4); 
+    init_color(16, 0x3a * 4, 0x94 * 4, 0xc5 * 4); 
+    init_color(17, 0x35 * 4, 0xa7 * 4, 0x7c * 4); 
+    init_color(18, 0xdf * 4, 0x69 * 4, 0xba * 4); 
+    
+    init_color(19, 0xf2 * 4, 0xef * 4, 0xdf * 4); //BG
+
+    // init_color(11, 0xf8 * 4, 0xfb * 4, 0xef * 4); // BG
+    
+    init_pair( 1, 12, -1);
+    init_pair( 2, 13, -1);
+    init_pair( 3, 14, -1);
+    init_pair( 4, 15, -1);
+    init_pair( 5, 16, -1);
+    init_pair( 6, 17, -1);
+    init_pair( 7, 18, -1);
+
+    init_pair(8, 19, -1); //BG
+}
+
+
+void enable_basic_palette() {
+    init_pair(1, COLOR_CYAN, -1);
+    init_pair(2, COLOR_YELLOW, -1);
+    init_pair(3, COLOR_MAGENTA, -1);
+    init_pair(4, COLOR_GREEN, -1);
+    init_pair(5, COLOR_RED, -1);
+    init_pair(6, COLOR_BLUE, -1);
+    init_pair(7, COLOR_WHITE, -1);  // As orange fallback
+}
+
+void set_background(WINDOW *w, int height, int width){
+    wattron(w, COLOR_PAIR(8));
+    
+    wattron(w, A_STANDOUT);
+
+
+    for (size_t i = 0; i < height; i++) {
+        for (size_t j = 0; j < width; j++)
+        {
+            mvwprintw(w, i, j, " ");
+        }
+    }
+    clear();
+    refresh();
 }

@@ -30,3 +30,8 @@ void draw_score(WINDOW*, int, int, int, unsigned long);
 
 
 void draw_side_boxes(WINDOW *, WINDOW *, WINDOW *, int, int, int, dataStream);
+
+void enable_soft_tetris_palette();
+void enable_basic_palette();
+
+void set_background(WINDOW *, int, int);
