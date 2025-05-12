@@ -35,3 +35,5 @@ void enable_soft_tetris_palette();
 void enable_basic_palette();
 
 void set_background(WINDOW *, int, int);
+
+void draw_help_text(WINDOW *, int, int, int);

@@ -160,6 +160,7 @@ int main(int argc, char *argv[]) {
     
     setUpGame(ds, blockList, TOTALBLOCKS);
     addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
+
     
     using clock = std::chrono::steady_clock;
     auto last_drop = clock::now();
@@ -167,7 +168,7 @@ int main(int argc, char *argv[]) {
     
     int character;
 
-    int show_controls{1};
+    int show_controls{};
 
     while ((character = wgetch(whole_screen))) {
         drop_interval_ms = 500;
@@ -186,8 +187,8 @@ int main(int argc, char *argv[]) {
             // printf("\033]111;\007");
             endwin();
             return 0;
-            case 'p':
-            show_controls++;
+            case 'h':
+            show_controls < 1 ? show_controls++ : show_controls--;
             break;
             case ' ':
             while(!fallFurtherDown(ds));
@@ -231,6 +232,10 @@ int main(int argc, char *argv[]) {
         
         draw_side_boxes(first_preview, second_preview, change_box, preview_board_height, preview_board_width, double_size, ds);
 
+        draw_help_text(whole_screen, terminal_height, terminal_width, show_controls);
+
+        // ---------------------------------------------------------------------------------------
+        
         refresh_all(windows);
         
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -399,7 +404,6 @@ void enable_soft_tetris_palette() {
     init_pair(8, 19, -1); //BG
 }
 
-
 void enable_basic_palette() {
     init_pair(1, COLOR_CYAN, -1);
     init_pair(2, COLOR_YELLOW, -1);
@@ -412,9 +416,7 @@ void enable_basic_palette() {
 
 void set_background(WINDOW *w, int height, int width){
     wattron(w, COLOR_PAIR(8));
-    
     wattron(w, A_STANDOUT);
-
 
     for (size_t i = 0; i < height; i++) {
         for (size_t j = 0; j < width; j++)
@@ -424,4 +426,22 @@ void set_background(WINDOW *w, int height, int width){
     }
     clear();
     refresh();
+}
+
+void draw_help_text (WINDOW* w, int height, int width, int status) {
+    if (status) {
+        mvwprintw(w, height-9, 2, "A: left");
+        mvwprintw(w, height-8, 2, "D: right");
+        mvwprintw(w, height-7, 2, "W: rotate");
+        mvwprintw(w, height-6, 2, "E: hold");
+        mvwprintw(w, height-5, 2, "Space: down");
+        mvwprintw(w, height-4, 2, "S: faster");
+        mvwprintw(w, height-3, 2, "Q: quit");
+        mvwprintw(w, height-2, 2, "H: close help    ");
+    } else {
+        for (size_t i = 0; i < 7; i++) {
+            mvwprintw(w, height-3-i, 2, "           ");
+        }
+        mvwprintw(w, height-2, 2, "Press H for help!");
+    }
 }
