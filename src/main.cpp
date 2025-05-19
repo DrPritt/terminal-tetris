@@ -248,13 +248,56 @@ int main(int argc, char *argv[]) {
 void print_help(void) {
     std::cout 
         << "Controls:\n"
-        << "q - closes tetris\n";
+        << "q - closes tetris\n"
+        << "Ingame controls:\n"
+        << "e - holds the current block\n"
+        << "w - rotates the current block\n"
+        << "s - speed up button\n"
+        << "a/d - move left/right\n"
+        << "space - teleport down\n"
+        << "alt+f4 - weak mans tool\n";
+
 }
 
+#include <random>
+
 void print_version(void) {
+    std::random_device rng;
     std::cout 
         << "Versions:\n"
-        << "blablabla!\n";
+        << "1.0\n";
+    if(rng() % 10 < 2){
+        std::cout << R"(
+  |\__/,|   (`\
+  |_ _  |.--.) )
+  ( T   )     /
+ (((^_(((/(((_>
+)";
+    }else if(rng() % 10 < 3){
+        std::cout << R"(
+             *     ,MMM8&&&.            *
+                  MMMM88&&&&&    .
+                 MMMM88&&&&&&&
+     *           MMM88&&&&&&&&
+                 MMM88&&&&&&&&
+                 'MMM88&&&&&&'
+                   'MMM8&&&'      *    
+          |\___/|     /\___/\
+          )     (     )    ~( .              '
+         =\     /=   =\~    /=
+           )===(       ) ~ (
+          /     \     /     \
+          |     |     ) ~   (
+         /       \   /     ~ \
+         \       /   \~     ~/
+  jgs_/\_/\__  _/_/\_/\__~__/_/\_/\_/\_/\_/\_
+  |  |  |  |( (  |  |  | ))  |  |  |  |  |  |
+  |  |  |  | ) ) |  |  |//|  |  |  |  |  |  |
+  |  |  |  |(_(  |  |  (( |  |  |  |  |  |  |
+  |  |  |  |  |  |  |  |\)|  |  |  |  |  |  |
+  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+)";
+    }
 }
 
 void refresh_all(std::vector<WINDOW *> windows) {
