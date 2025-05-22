@@ -1,0 +1,31 @@
+Projekti nimi: terminal-tetris
+Progejad: Ron Singson (frontend - kuvamine) ja Oliver Kongo (backend - loogika)
+
+Projekti eesmärk võimaldada mängida Tetrist terminalis. 
+Selle teostamiseks kasutame ncurses teeki. 
+
+Koodi käivitamise kohta lugeda README.md failist.
+
+Mäng jookseb nii tavasuuruses, kui ka fullscreenis, kuid tuleb enne koodi jooksutamist terminal õigeks suuruseks teha.
+
+====MÄNG====
+Tekivad suvalised plokid, nagu tavalises tetrises, mida saab liigutada vasakule-paremale ning pöörata ümber oma telje.
+Ploki kukkumist on võimalik kiirendada.
+Kui rida täitub täielikult plokkidega, kaob rida, tõuseb skoor ning mäng liigub allapoole.
+
+Plokki on võimalik hoida (vahetada hoitavaga), et planeerida ette oma käike paremini. Samuti kuvab mäng kahte järgnevat plokki.
+
+Skoor on üksühele lihtsalt arv, mitu plokki mängija on hävitanud.
+
+Kui plokid peaksid minema ülemise piirjooneni, on mängija kaotanud ning mäng sulgub.
+
+
+Kontrollid on järgmised:
+- d - paremale
+- a - vasakule
+- w - päripäeva pööramine
+- e - ploki hoidmine
+- space - kohene 
+- s - kiirem allakukkumine
+- q - mängu lõpetamine
+- h - abitekst
