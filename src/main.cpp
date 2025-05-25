@@ -55,7 +55,6 @@ int main(int argc, char* argv[]) {
             }
         }
 
-
     WINDOW* game_board;
     WINDOW* score_board;
     WINDOW* first_preview;

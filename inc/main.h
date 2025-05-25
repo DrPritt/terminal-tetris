@@ -14,9 +14,11 @@
 #include "blocks.h"
 
 void print_help(void);
+
 void print_version(void);
 
 void refresh_all(std::vector<WINDOW*>);
+
 void borders_all(std::vector<WINDOW *>, WINDOW * = nullptr); 
 
 void draw_dots(WINDOW *, int, int, int);
@@ -29,10 +31,10 @@ void moving_down(dataStream &);
 
 void draw_score(WINDOW*, int, int, int, unsigned long);
 
-
 void draw_side_boxes(WINDOW *, WINDOW *, WINDOW *, int, int, int, dataStream);
 
 void enable_soft_tetris_palette();
+
 void enable_basic_palette();
 
 void set_background(WINDOW *, int, int);
