@@ -15,6 +15,12 @@ int main(int argc, char* argv[]) {
             }
         }
 
+
+        
+    //------------------------------------- GETTING READY FOR GAME ----------------------------------------------
+
+
+
     initscr();
     noecho();
     curs_set(0);
@@ -51,11 +57,9 @@ int main(int argc, char* argv[]) {
 
 
     WINDOW* game_board;
-
     WINDOW* score_board;
     WINDOW* first_preview;
     WINDOW* second_preview;
-
     WINDOW* change_box;
 
     // Defiing window default sizes
@@ -136,8 +140,6 @@ int main(int argc, char* argv[]) {
     set_background(score_board, score_board_height, score_board_width);
 
     borders_all(windows, whole_screen);
-    //wborder(game_board, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
-    //    ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
     mvwprintw(score_board, double_size ? 3 : 2, 1, double_size ? "Current:" : "C:");
     // mvwprintw(score_board, double_size ? 4 : 3, 1, double_size ? "High:" : "H:");
@@ -169,6 +171,12 @@ int main(int argc, char* argv[]) {
     int character;
 
     int show_controls{};
+
+
+
+    // ----------------------------------------------------- LOOP TIME ---------------------------------------------- 
+
+
 
     while ((character = wgetch(whole_screen))) {
         drop_interval_ms = 500;
@@ -241,7 +249,11 @@ int main(int argc, char* argv[]) {
     return 0;
     }
 
-// -------------------------------------------------------------------------------------------------
+
+
+// -------------------------------------------- FUNCTION DEFINITIONS -------------------------------------------
+
+
 
 void print_help(void) {
     std::cout
@@ -256,8 +268,6 @@ void print_help(void) {
         << "alt+f4 - weak mans tool\n";
 
     }
-
-#include <random>
 
 void print_version(void) {
     std::random_device rng;
@@ -316,7 +326,6 @@ void borders_all(std::vector<WINDOW*> windows, WINDOW* ignore) {
         wattron(window, A_STANDOUT);
         box(window, 0, 0);
         wattroff(window, A_BOLD);
-        // wattroff(window, COLOR_PAIR(9));
         }
     }
 
@@ -421,8 +430,6 @@ void enable_soft_tetris_palette() {
     init_color(18, 0xdf * 4, 0x69 * 4, 0xba * 4);
 
     init_color(19, 0xf2 * 4, 0xef * 4, 0xdf * 4); //BG
-
-    // init_color(11, 0xf8 * 4, 0xfb * 4, 0xef * 4); // BG
 
     init_pair(1, 12, -1);
     init_pair(2, 13, -1);
