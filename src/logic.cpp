@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
-bool hasHitRockBottom(const dataStream frameData){ // i have hit rock bottom
+bool hasHitRockBottom(dataStream frameData){ // i have hit rock bottom
   // checks whether the falling frame has hit anything and should be stopped from moving any further down
   for(int i{0}; i < ROWS; i++){
     for(int j{0}; j < COLUMNS; j++){
@@ -236,6 +236,9 @@ void setUpGame(dataStream& frameData, block blockList[], int totalBlocks){
 }
 
 block getNext(dataStream& frameData, block blockList[], int totalBlocks){
+  if(frameData.holdsBlock){
+    frameData.changedHold = false;
+  }
   block retBlock = frameData.nextBlock;
   frameData.nextBlock = frameData.nextNextBlock;
   frameData.nextNextBlock = blockList[std::rand() % totalBlocks];
@@ -252,6 +255,8 @@ bool isGameJoever(dataStream& frameData){
 }
 
 void changeHold(dataStream& frameData, block blockList[], int maxBlocks){
+  if(frameData.changedHold){ return; }
+  frameData.changedHold = true;
   if(frameData.holdsBlock){
     block tempBlock = frameData.holdingBlock;
     frameData.holdingBlock = frameData.blockType;

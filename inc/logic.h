@@ -30,6 +30,7 @@ struct dataStream{
   bool holdsBlock{false};
   block holdingBlock;
   unsigned long score{0};
+  bool changedHold = false;
 };
 
 bool hasHitRockBottom(dataStream frameData); // returns true if the currently falling block has hit something
