@@ -10,6 +10,7 @@
 #include <thread>
 #include <chrono>
 #include <random>
+#include <cmath>
 
 #include "blocks.h"
 
@@ -40,3 +41,5 @@ void enable_basic_palette();
 void set_background(WINDOW *, int, int);
 
 void draw_help_text(WINDOW *, int, int, int);
+
+double drop_time(int);

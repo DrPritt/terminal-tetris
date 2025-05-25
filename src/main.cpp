@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
         }
 
 
-        
+
     //------------------------------------- GETTING READY FOR GAME ----------------------------------------------
 
 
@@ -178,7 +178,7 @@ int main(int argc, char* argv[]) {
 
 
     while ((character = wgetch(whole_screen))) {
-        drop_interval_ms = 500;
+        drop_interval_ms = drop_time(ds.score);
         switch (character) {
             case 'a':
                 moveBlockLeft(ds);
@@ -202,7 +202,7 @@ int main(int argc, char* argv[]) {
                 addFallingBlock(ds, getNext(ds, blockList, TOTALBLOCKS));
                 break;
             case 's':
-                drop_interval_ms = 50;
+                drop_interval_ms /= 10;
                 break;
             case 'e':
                 changeHold(ds, blockList, TOTALBLOCKS);
@@ -480,4 +480,13 @@ void draw_help_text(WINDOW* w, int height, int width, int status) {
             }
         mvwprintw(w, height - 2, 2, "Press H for help!");
         }
+    }
+
+double drop_time(int score) {
+    const double INITIAL_DROP_TIME = 800;
+    const double MIN_DROP_TIME = 16;
+    const double DECAY_CONSTANT = 0.005;
+
+    double dropTime = INITIAL_DROP_TIME * std::exp(-DECAY_CONSTANT * score);
+    return std::max(MIN_DROP_TIME, dropTime);
     }

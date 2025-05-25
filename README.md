@@ -57,7 +57,3 @@ While in /terminal-tetris:
 ```bash
 ./main -v
 ```
-
-2. Whilst in game you can toggle on/off the controls!
-
-Press **p**!
