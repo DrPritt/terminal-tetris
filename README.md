@@ -10,6 +10,7 @@ Creators: Ron S. and Oliver K.
 - Colorful ncurses graphics
 - Hold and preview blocks
 - Score tracking
+- Difficulty increase
 
 # Dependencies
 
